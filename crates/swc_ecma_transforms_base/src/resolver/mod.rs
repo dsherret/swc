@@ -620,6 +620,17 @@ impl<'a> VisitMut for Resolver<'a> {
         }
     }
 
+    fn visit_mut_named_export(&mut self, node: &mut NamedExport) {
+        let old = self.ident_type;
+        if node.src.is_none() {
+            self.ident_type = IdentType::Ref;
+        } else {
+            self.ident_type = IdentType::Binding;
+        }
+        node.visit_mut_children_with(self);
+        self.ident_type = old;
+    }
+
     fn visit_mut_expr(&mut self, expr: &mut Expr) {
         self.in_type = false;
         let old = self.ident_type;
